@@ -2,6 +2,7 @@
 using FlightTicketApi_FinalProject.Entities.Concretes;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 
 namespace FlightTicketApi_FinalProject.Controllers
 {
@@ -17,6 +18,16 @@ namespace FlightTicketApi_FinalProject.Controllers
                 SeatRow = 1,
                 SeatColumn = enums[0].ToString()
             };
+        }
+
+        public static List<Flight> Flights = new List<Flight>();
+        [HttpPost]
+        public Flight CreateFlight(string flightNumber, PlaneConfiguration planeConfiguration, Destination departure, Destination arrival, DateTime flightTime, int businessClassRows)
+        {
+            Flight _flight = new Flight(flightNumber, planeConfiguration, departure, arrival, flightTime, businessClassRows);
+            Flights.Add(_flight);
+            return _flight;
+
         }
 
     }

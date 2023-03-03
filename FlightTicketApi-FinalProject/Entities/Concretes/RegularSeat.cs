@@ -16,7 +16,7 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
             this.Price = SeatPrices.Regular;
         }
 
-        public RegularSeat(int seatRow, string seatColumn)
+        public RegularSeat(int seatRow, string seatColumn) : this()
         {
             this.SeatRow = seatRow;
             this.SeatColumn = seatColumn;
