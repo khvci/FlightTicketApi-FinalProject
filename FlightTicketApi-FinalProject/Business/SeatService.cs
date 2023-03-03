@@ -1,12 +1,14 @@
 ﻿using FlightTicketApi_FinalProject.Entities.Abstracts;
 using FlightTicketApi_FinalProject.Entities.Concretes;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FlightTicketApi_FinalProject.Business
 {
     public class SeatService
     {
-        public static List<ISeat> Create(int planeType, int businessClassRows, PlaneConfiguration[] _configurations, ColumnCharacters[] _columnCharacters)
+        public static List<ISeat> CreateSeatsInFlight(int planeType, int businessClassRows, PlaneConfiguration[] _configurations, ColumnCharacters[] _columnCharacters)
         {
             int _planeCapacity = (int)_configurations[planeType];
             int _maxSeatsInBusinessRows = 4;
@@ -33,6 +35,13 @@ namespace FlightTicketApi_FinalProject.Business
             }
 
             return Seats;
+        }
+
+        public static ActionResult<List<ISeat>> GetAvailableSeatsInFlight(Flight flight)
+        {
+            List<ISeat> availableSeats = flight.Seats.Where(s => s.IsAvailable).ToList();
+
+            return availableSeats;
         }
     }
 }

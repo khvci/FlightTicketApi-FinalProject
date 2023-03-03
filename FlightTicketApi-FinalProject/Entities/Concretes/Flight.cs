@@ -40,7 +40,7 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
             FlightTime = flightTime;
             BusinessClassRows = businessClassRows;
 
-            Seats = SeatService.Create(planeType, businessClassRows, _configurations, _columnCharacters);
+            Seats = SeatService.CreateSeatsInFlight(planeType, businessClassRows, _configurations, _columnCharacters);
         }
 
         
