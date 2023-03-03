@@ -11,7 +11,7 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
     public class Flight
     {
         public string FlightNumber { get; set; }
-        public PlaneConfiguration Plane { get; set; }
+        public string PlaneType { get; set; }
         public Destination Departure { get; set; }
         public Destination Arrival { get; set; }
         public DateTime FlightTime { get; set; }
@@ -21,18 +21,24 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
         {
         }
 
-        public Flight(string flightNumber, PlaneConfiguration planeConfiguration, Destination departure, Destination arrival, DateTime flightTime, int businessClassRows)
+
+        public Flight(string flightNumber, int planeType, Destination departure, Destination arrival, DateTime flightTime, int businessClassRows)
         {
-            FlightNumber = flightNumber ?? throw new ArgumentNullException(nameof(flightNumber));
-            Plane = planeConfiguration;
+            Seats = new List<ISeat>();
+            var _columnCharacters = (ColumnCharacters[])Enum.GetValues(typeof(ColumnCharacters));
+            PlaneConfiguration[] _configurations = (PlaneConfiguration[])Enum.GetValues(typeof(PlaneConfiguration));
+
+            FlightNumber = flightNumber;// ?? throw new ArgumentNullException(nameof(flightNumber));
+            PlaneType = _configurations[planeType].ToString();
             Departure = departure;
             Arrival = arrival;
             FlightTime = flightTime;
             BusinessClassRows = businessClassRows;
 
-            Seats = new List<ISeat>();
-            var _columnCharacters = (ColumnCharacters[])Enum.GetValues(typeof(ColumnCharacters));
-            int _planeCapacity = (int)planeConfiguration;
+            
+            int _planeCapacity = (int)_configurations[planeType];
+            
+
             int _maxSeatsInBusinessRows = 4;
             int _maxSeatsInRegularRows = 6;
             for (int i = 1; i <= businessClassRows; i++)

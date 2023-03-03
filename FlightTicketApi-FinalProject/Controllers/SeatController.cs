@@ -22,9 +22,9 @@ namespace FlightTicketApi_FinalProject.Controllers
 
         public static List<Flight> Flights = new List<Flight>();
         [HttpPost]
-        public Flight CreateFlight(string flightNumber, PlaneConfiguration planeConfiguration, Destination departure, Destination arrival, DateTime flightTime, int businessClassRows)
+        public Flight CreateFlight(string flightNumber, int planeType, Destination departure, Destination arrival, DateTime flightTime, int businessClassRows)
         {
-            Flight _flight = new Flight(flightNumber, planeConfiguration, departure, arrival, flightTime, businessClassRows);
+            Flight _flight = new Flight(flightNumber, planeType, departure, arrival, flightTime, businessClassRows);
             Flights.Add(_flight);
             return _flight;
 
