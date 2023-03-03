@@ -1,69 +1,54 @@
-﻿using FlightTicketApi_FinalProject.Entities.Abstracts;
-using FlightTicketApi_FinalProject.Helpers;
-using Microsoft.VisualBasic;
+﻿using FlightTicketApi_FinalProject.Business;
+using FlightTicketApi_FinalProject.Entities.Abstracts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace FlightTicketApi_FinalProject.Entities.Concretes
 {
     public class Flight
     {
         public string FlightNumber { get; set; }
-        public string PlaneType { get; set; }
-        public Destination Departure { get; set; }
-        public Destination Arrival { get; set; }
+        public string PlaneName { get; set; }
+        public string DepartureCity { get; set; }
+        public string ArrivalCity { get; set; }
         public DateTime FlightTime { get; set; }
         public int BusinessClassRows { get; set; }
         public List<ISeat> Seats { get; set; }
+        public int PlaneType { get; set; }
+        public int DepartureCityId { get; set; }
+        public int ArrivalCityId { get; set; }
         public Flight()
         {
         }
 
 
-        public Flight(string flightNumber, int planeType, Destination departure, Destination arrival, DateTime flightTime, int businessClassRows)
+        public Flight(string flightNumber, int planeType, int departureCityId, int arrivalCityId, DateTime flightTime, int businessClassRows)
         {
-            
-            PlaneConfiguration[] _configurations = (PlaneConfiguration[])Enum.GetValues(typeof(PlaneConfiguration));
 
-            FlightNumber = flightNumber;// ?? throw new ArgumentNullException(nameof(flightNumber));
-            PlaneType = _configurations[planeType].ToString();
-            Departure = departure;
-            Arrival = arrival;
+            PlaneConfiguration[] _configurations = (PlaneConfiguration[])Enum.GetValues(typeof(PlaneConfiguration));
+            Destination[] _destinations = (Destination[])Enum.GetValues(typeof(Destination));
+            ColumnCharacters[] _columnCharacters = (ColumnCharacters[])Enum.GetValues(typeof(ColumnCharacters));
+
+            FlightNumber = flightNumber;
+            PlaneType = planeType;
+            PlaneName = _configurations[planeType].ToString();
+            DepartureCityId = departureCityId;
+            DepartureCity = _destinations[departureCityId].ToString();
+            ArrivalCityId = arrivalCityId;
+            ArrivalCity = _destinations[arrivalCityId].ToString();
             FlightTime = flightTime;
             BusinessClassRows = businessClassRows;
 
-            
-            int _planeCapacity = (int)_configurations[planeType];
-            
-
-            int _maxSeatsInBusinessRows = 4;
-            int _maxSeatsInRegularRows = 6;
-            Seats = new List<ISeat>();
-            var _columnCharacters = (ColumnCharacters[])Enum.GetValues(typeof(ColumnCharacters));
-            for (int i = 1; i <= businessClassRows; i++)
-            {
-                for (int j = 0; j < _maxSeatsInBusinessRows; j++)
-                {
-                    ISeat businessSeat = new BusinessSeat(i, _columnCharacters[j].ToString());
-                    Seats.Add(businessSeat);
-                }
-            }
-            for (int i = ++businessClassRows; i <= _planeCapacity; i++)
-            {
-                for (int j = 0; j < _maxSeatsInRegularRows; j++)
-                {
-                    ISeat regularSeat = new RegularSeat(i, _columnCharacters[j].ToString());
-                    Seats.Add(regularSeat);
-                }
-            }
+            Seats = SeatService.Create(planeType, businessClassRows, _configurations, _columnCharacters);
         }
+
+        
     }
 
     public enum Destination 
     { 
-        Istanbul, London, Berlin, Madrid
+        Istanbul, London, Berlin, Madrid, Moscow, Dubai, Washington
     }
 
     public enum PlaneConfiguration 
