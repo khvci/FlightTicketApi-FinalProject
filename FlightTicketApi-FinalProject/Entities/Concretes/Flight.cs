@@ -24,8 +24,7 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
 
         public Flight(string flightNumber, int planeType, Destination departure, Destination arrival, DateTime flightTime, int businessClassRows)
         {
-            Seats = new List<ISeat>();
-            var _columnCharacters = (ColumnCharacters[])Enum.GetValues(typeof(ColumnCharacters));
+            
             PlaneConfiguration[] _configurations = (PlaneConfiguration[])Enum.GetValues(typeof(PlaneConfiguration));
 
             FlightNumber = flightNumber;// ?? throw new ArgumentNullException(nameof(flightNumber));
@@ -41,6 +40,8 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
 
             int _maxSeatsInBusinessRows = 4;
             int _maxSeatsInRegularRows = 6;
+            Seats = new List<ISeat>();
+            var _columnCharacters = (ColumnCharacters[])Enum.GetValues(typeof(ColumnCharacters));
             for (int i = 1; i <= businessClassRows; i++)
             {
                 for (int j = 0; j < _maxSeatsInBusinessRows; j++)
