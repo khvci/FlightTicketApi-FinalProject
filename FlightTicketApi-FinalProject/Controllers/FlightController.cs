@@ -1,4 +1,5 @@
 ﻿using FlightTicketApi_FinalProject.Business;
+using FlightTicketApi_FinalProject.DataRepository;
 using FlightTicketApi_FinalProject.Entities.Abstracts;
 using FlightTicketApi_FinalProject.Entities.Concretes;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,12 @@ namespace FlightTicketApi_FinalProject.Controllers
         [HttpPost]
         public ActionResult<Flight> CreateFlight([FromBody] Flight flight)
         {
+            if (FlightsRepo.Flights.Exists(f => f.FlightNumber == flight.FlightNumber))
+            {
+                return BadRequest($"Flight with flight number {flight.FlightNumber} already exists.");
+            }
             return FlightService.CreateFlightFromJson(flight.FlightNumber, flight.PlaneType, flight.DepartureCityId, flight.ArrivalCityId, flight.FlightTime, flight.BusinessClassRows);
         }
-
 
         [HttpGet]
         [Route("{flightNumber}")]
@@ -29,7 +33,5 @@ namespace FlightTicketApi_FinalProject.Controllers
 
             return SeatService.GetAvailableSeatsInFlight(flight);
         }
-
-        
     }
 }

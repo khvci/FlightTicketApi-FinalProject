@@ -1,6 +1,5 @@
 ﻿using FlightTicketApi_FinalProject.Entities.Abstracts;
 using FlightTicketApi_FinalProject.Entities.Concretes;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,7 +36,7 @@ namespace FlightTicketApi_FinalProject.Business
             return Seats;
         }
 
-        public static ActionResult<List<ISeat>> GetAvailableSeatsInFlight(Flight flight)
+        public static List<ISeat> GetAvailableSeatsInFlight(Flight flight)
         {
             List<ISeat> availableSeats = flight.Seats.Where(s => s.IsAvailable).ToList();
 
