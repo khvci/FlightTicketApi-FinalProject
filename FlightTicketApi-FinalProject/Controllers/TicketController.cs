@@ -1,4 +1,5 @@
-﻿using FlightTicketApi_FinalProject.DataRepository;
+﻿using FlightTicketApi_FinalProject.Business;
+using FlightTicketApi_FinalProject.DataRepository;
 using FlightTicketApi_FinalProject.Entities.Abstracts;
 using FlightTicketApi_FinalProject.Entities.Concretes;
 using Microsoft.AspNetCore.Mvc;
@@ -11,53 +12,45 @@ namespace FlightTicketApi_FinalProject.Controllers
     [Route("api/[controller]")]
     public class TicketController : ControllerBase
     {
+        /// <summary>
+        /// Buy a new ticket with the specified seat
+        /// </summary>
+        /// <param name="seatSelection"></param>
+        /// <returns></returns>
         [HttpPost]
-        [Route("buy-ticket")]
-        public ActionResult<Ticket> BuyTicket([FromBody] SeatSelection seatSelection)
+        [Route("buy")]
+        public ActionResult<Ticket> BuyTicket([FromBody] SeatSelectionDTO seatSelection)
         {
             Flight flight = FlightsRepo.Flights.FirstOrDefault(f => f.FlightNumber.Equals(seatSelection.FlightNumber));
+
             if (flight == null)
             {
                 return BadRequest("Flight not found");
             }
 
-            int maxBusinessRows = flight.BusinessClassRows;
-            int seatRow = seatSelection.SeatRow;
-            string seatColumn = seatSelection.SeatColumn;
+            ISeat selectedSeat;
+            string seatType = seatSelection.SeatRow <= flight.BusinessClassRows ? "BusinessSeat" : "RegularSeat";
+            selectedSeat = flight.Seats.FirstOrDefault(
+                s => s.SeatRow == seatSelection.SeatRow && s.SeatColumn == seatSelection.SeatColumn && s.GetType().Name == seatType && s.IsAvailable);
 
-            if (seatRow <= maxBusinessRows)
+            if (selectedSeat == null)
             {
-                ISeat selectedSeat = flight.Seats.FirstOrDefault(s => s.SeatRow == seatRow && s.SeatColumn == seatColumn && s is BusinessSeat && s.IsAvailable);
-                if (selectedSeat == null)
-                {
-                    return BadRequest($"Seat {seatRow}{seatColumn} is not available in Business Class");
-                }
-
-                selectedSeat.IsAvailable = false;
-                double price = selectedSeat.Price;
-                Ticket ticket = new Ticket(flight, selectedSeat, price);
-                TicketsRepo.Tickets.Add(ticket);
-                return Ok(ticket);
+                return BadRequest($"Seat {seatSelection.SeatRow}{seatSelection.SeatColumn} is not available.");
             }
-            else
-            {
-                ISeat selectedSeat = flight.Seats.FirstOrDefault(s => s.SeatRow == seatRow && s.SeatColumn == seatColumn && s is RegularSeat && s.IsAvailable);
-                if (selectedSeat == null)
-                {
-                    return BadRequest($"Seat {seatRow}{seatColumn} is not available in Regular Class");
-                }
 
-                selectedSeat.IsAvailable = false;
-                double price = selectedSeat.Price;
-                Ticket ticket = new Ticket(flight, selectedSeat, price);
-                TicketsRepo.Tickets.Add(ticket);
-                return Ok(ticket);
-            }
+            Ticket ticket = TicketService.CreateTicketToBuySeat(flight, selectedSeat);
+            return Ok(ticket);
+
         }
 
-        [HttpPost]
-        [Route("return-ticket")]
-        public ActionResult<string> ReturnTicket([FromBody] TicketReturnRequest request)
+        /// <summary>
+        /// Return a ticket and make it available again
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("return")]
+        public ActionResult<string> ReturnTicket([FromBody] TicketReturnRequestDTO request)
         {
             if (TicketsRepo.Tickets == null)
             {
@@ -71,15 +64,16 @@ namespace FlightTicketApi_FinalProject.Controllers
                 return BadRequest("Ticket not found");
             }
 
-            ISeat seat = ticket.SelectedSeat;
-            seat.IsAvailable = true;
-            TicketsRepo.Tickets.Remove(ticket);
-
+            TicketService.ReturnTicket(ticket);
             return Ok("Ticket returned successfully");
         }
 
+        /// <summary>
+        /// Get all tickets from tickets repository
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        [Route("all-tickets")]
+        [Route("all")]
         public ActionResult<List<Ticket>> GetAllTickets()
         {
             if (TicketsRepo.Tickets == null)
@@ -91,14 +85,14 @@ namespace FlightTicketApi_FinalProject.Controllers
     }
 
 
-    public class SeatSelection
+    public class SeatSelectionDTO
     {
         public string FlightNumber { get; set; }
         public int SeatRow { get; set; }
         public string SeatColumn { get; set; }
     }
 
-    public class TicketReturnRequest
+    public class TicketReturnRequestDTO
     {
         public string TicketToken { get; set; }
     }

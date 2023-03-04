@@ -19,7 +19,18 @@ namespace FlightTicketApi_FinalProject
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerDocument();
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = (doc =>
+                {
+                    doc.Info.Title = "Flight Ticket Web API";
+                    doc.Info.Contact = new NSwag.OpenApiContact()
+                    {
+                        Name = "R. Cem Kahveci",
+                        Url = "https://www.github.com/khvci",
+                    };
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

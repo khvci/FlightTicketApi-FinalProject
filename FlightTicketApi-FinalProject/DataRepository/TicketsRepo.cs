@@ -6,6 +6,5 @@ namespace FlightTicketApi_FinalProject.DataRepository
     public static class TicketsRepo
     {
         public static List<Ticket> Tickets { get; set; } = new List<Ticket>();
-
     }
 }

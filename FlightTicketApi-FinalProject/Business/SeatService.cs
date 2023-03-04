@@ -1,4 +1,5 @@
-﻿using FlightTicketApi_FinalProject.Entities.Abstracts;
+﻿using FlightTicketApi_FinalProject.DataRepository;
+using FlightTicketApi_FinalProject.Entities.Abstracts;
 using FlightTicketApi_FinalProject.Entities.Concretes;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,9 @@ namespace FlightTicketApi_FinalProject.Business
 {
     public class SeatService
     {
-        public static List<ISeat> CreateSeatsInFlight(int planeType, int businessClassRows, PlaneConfiguration[] _configurations, ColumnCharacters[] _columnCharacters)
+        public static List<ISeat> CreateSeatsInFlight(int planeType, int businessClassRows, PlaneConfiguration[] configurations, ColumnCharacters[] columnCharacters)
         {
-            int _planeCapacity = (int)_configurations[planeType];
+            int _planeCapacity = (int)configurations[planeType];
             int _maxSeatsInBusinessRows = 4;
             int _maxSeatsInRegularRows = 6;
 
@@ -19,7 +20,7 @@ namespace FlightTicketApi_FinalProject.Business
             {
                 for (int j = 0; j < _maxSeatsInBusinessRows; j++)
                 {
-                    ISeat businessSeat = new BusinessSeat(i, _columnCharacters[j].ToString());
+                    ISeat businessSeat = new BusinessSeat(i, columnCharacters[j].ToString());
                     Seats.Add(businessSeat);
                 }
             }
@@ -28,7 +29,7 @@ namespace FlightTicketApi_FinalProject.Business
             {
                 for (int j = 0; j < _maxSeatsInRegularRows; j++)
                 {
-                    ISeat regularSeat = new RegularSeat(i, _columnCharacters[j].ToString());
+                    ISeat regularSeat = new RegularSeat(i, columnCharacters[j].ToString());
                     Seats.Add(regularSeat);
                 }
             }

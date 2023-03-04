@@ -1,8 +1,9 @@
 ﻿using FlightTicketApi_FinalProject.Business;
+using FlightTicketApi_FinalProject.Controllers;
 using FlightTicketApi_FinalProject.Entities.Abstracts;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace FlightTicketApi_FinalProject.Entities.Concretes
 {
@@ -18,6 +19,12 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
         public int PlaneType { get; set; }
         public int DepartureCityId { get; set; }
         public int ArrivalCityId { get; set; }
+        [JsonIgnore]
+        PlaneConfiguration[] configurations;
+        [JsonIgnore]
+        Destination[] destinations;
+        [JsonIgnore]
+        ColumnCharacters[] columnCharacters;
         public Flight()
         {
         }
@@ -26,24 +33,29 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
         public Flight(string flightNumber, int planeType, int departureCityId, int arrivalCityId, DateTime flightTime, int businessClassRows)
         {
 
-            PlaneConfiguration[] _configurations = (PlaneConfiguration[])Enum.GetValues(typeof(PlaneConfiguration));
-            Destination[] _destinations = (Destination[])Enum.GetValues(typeof(Destination));
-            ColumnCharacters[] _columnCharacters = (ColumnCharacters[])Enum.GetValues(typeof(ColumnCharacters));
+            configurations = (PlaneConfiguration[])Enum.GetValues(typeof(PlaneConfiguration));
+            destinations = (Destination[])Enum.GetValues(typeof(Destination));
+            columnCharacters = (ColumnCharacters[])Enum.GetValues(typeof(ColumnCharacters));
 
             FlightNumber = flightNumber;
             PlaneType = planeType;
-            PlaneName = _configurations[planeType].ToString();
+            PlaneName = configurations[planeType].ToString();
             DepartureCityId = departureCityId;
-            DepartureCity = _destinations[departureCityId].ToString();
+            DepartureCity = destinations[departureCityId].ToString();
             ArrivalCityId = arrivalCityId;
-            ArrivalCity = _destinations[arrivalCityId].ToString();
+            ArrivalCity = destinations[arrivalCityId].ToString();
             FlightTime = flightTime;
             BusinessClassRows = businessClassRows;
 
-            Seats = SeatService.CreateSeatsInFlight(planeType, businessClassRows, _configurations, _columnCharacters);
+            Seats = SeatService.CreateSeatsInFlight(planeType, businessClassRows, configurations, columnCharacters);
         }
 
-        
+        public Flight(FlightRequestDTO flightRequest) : this(
+            flightRequest.FlightNumber, flightRequest.PlaneType,
+            flightRequest.DepartureCityId, flightRequest.ArrivalCityId,
+            flightRequest.FlightTime, flightRequest.BusinessClassRows)
+        {
+        }
     }
 
     public enum Destination 
@@ -58,7 +70,7 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
         AirbusA320 = 30,
         Boeing737 = 32,
         Boeing747 = 36
-}
+    }
 
 
 }
