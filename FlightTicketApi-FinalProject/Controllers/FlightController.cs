@@ -32,37 +32,6 @@ namespace FlightTicketApi_FinalProject.Controllers
         }
 
         /// <summary>
-        /// Update an existing flight
-        /// </summary>
-        /// <param name="flightRequest"></param>
-        /// <returns></returns>
-        //[HttpPatch("update/{flightNumber}")]
-        //public ActionResult<Flight> UpdateFlight(string flightNumber, [FromBody] FlightRequestDTO flightRequest)
-        //{
-        //    Flight flightToUpdate = FlightsRepo.Flights.FirstOrDefault(f => f.FlightNumber.Equals(flightNumber));
-        //    if (flightToUpdate == null)
-        //    {
-        //        return BadRequest($"Flight with flight number {flightNumber} not found.");
-        //    }
-
-        //    if (FlightsRepo.Flights.Exists(f => f.FlightNumber != flightNumber && f.FlightNumber == flightRequest.FlightNumber))
-        //    {
-        //        return BadRequest($"Flight with flight number {flightRequest.FlightNumber} already exists.");
-        //    }
-
-        //    flightToUpdate.FlightNumber = flightRequest.FlightNumber;
-        //    flightToUpdate.PlaneType = flightRequest.PlaneType;
-        //    flightToUpdate.DepartureCityId = flightRequest.DepartureCityId;
-        //    flightToUpdate.ArrivalCityId = flightRequest.ArrivalCityId;
-        //    flightToUpdate.FlightTime = flightRequest.FlightTime;
-        //    flightToUpdate.BusinessClassRows = flightRequest.BusinessClassRows;
-
-        //    return Ok(flightToUpdate);
-        //}
-
-
-
-        /// <summary>
         /// Get all available seats in a specified flight
         /// </summary>
         /// <param name="flightNumber"></param>
@@ -104,6 +73,7 @@ namespace FlightTicketApi_FinalProject.Controllers
         /// </summary>
         /// <param name="flightNumber"></param>
         /// <returns></returns>
+        
         [HttpDelete]
         [Route("delete/{flightNumber}")]
         public ActionResult<string> DeleteFlight(string flightNumber)

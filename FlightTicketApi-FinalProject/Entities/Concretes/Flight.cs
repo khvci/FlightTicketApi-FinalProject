@@ -25,10 +25,10 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
         Destination[] destinations;
         [JsonIgnore]
         ColumnCharacters[] columnCharacters;
+
         public Flight()
         {
         }
-
 
         public Flight(string flightNumber, int planeType, int departureCityId, int arrivalCityId, DateTime flightTime, int businessClassRows)
         {
@@ -71,6 +71,4 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
         Boeing737 = 32,
         Boeing747 = 36
     }
-
-
 }

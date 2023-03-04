@@ -48,6 +48,7 @@ namespace FlightTicketApi_FinalProject.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        
         [HttpDelete]
         [Route("return")]
         public ActionResult<string> ReturnTicket([FromBody] TicketReturnRequestDTO request)
@@ -72,6 +73,7 @@ namespace FlightTicketApi_FinalProject.Controllers
         /// Get all tickets from tickets repository
         /// </summary>
         /// <returns></returns>
+        
         [HttpGet]
         [Route("all")]
         public ActionResult<List<Ticket>> GetAllTickets()
@@ -83,7 +85,6 @@ namespace FlightTicketApi_FinalProject.Controllers
             return Ok(TicketsRepo.Tickets);
         }
     }
-
 
     public class SeatSelectionDTO
     {
