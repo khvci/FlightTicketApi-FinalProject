@@ -127,24 +127,7 @@ namespace FlightTicketApi_FinalProject.Controllers
         public DateTime FlightTime { get; set; }
         public int BusinessClassRows { get; set; }
 
-        //public FlightRequestDTO()
-        //{
-        //}
-
-        //public FlightRequestDTO(string flightNumber, int planeType, int departureCityId, int arrivalCityId, DateTime flightTime, int businessClassRows)
-        //{
-        //    FlightNumber = flightNumber;
-        //    PlaneType = planeType;
-        //    DepartureCityId = departureCityId;
-        //    ArrivalCityId = arrivalCityId;
-        //    FlightTime = flightTime;
-        //    BusinessClassRows = businessClassRows;
-        //}
-
-        //public FlightRequestDTO(Flight flight) : 
-        //    this(flight.FlightNumber, flight.PlaneType, flight.DepartureCityId, flight.ArrivalCityId, flight.FlightTime, flight.BusinessClassRows)
-        //{
-        //}
+        
     }
 
     public class FlightResponseDTO
