@@ -6,6 +6,12 @@ namespace FlightTicketApi_FinalProject.Business
 {
     public static class TicketService
     {
+        /// <summary>
+        /// Creates a ticket to buy a seat on a flight.
+        /// </summary>
+        /// <param name="flight">The flight to buy a seat on.</param>
+        /// <param name="selectedSeat">The selected seat to buy.</param>
+        /// <returns>The created ticket.</returns>
         public static Ticket CreateTicketToBuySeat(Flight flight, ISeat selectedSeat)
         {
             selectedSeat.IsAvailable = false;
@@ -15,6 +21,10 @@ namespace FlightTicketApi_FinalProject.Business
             return ticket;
         }
 
+        /// <summary>
+        /// Returns a ticket and makes the seat available again.
+        /// </summary>
+        /// <param name="ticket">The ticket to return.</param>
         public static void ReturnTicket(Ticket ticket)
         {
             ISeat seat = ticket.SelectedSeat;

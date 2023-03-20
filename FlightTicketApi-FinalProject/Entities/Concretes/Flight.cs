@@ -58,11 +58,17 @@ namespace FlightTicketApi_FinalProject.Entities.Concretes
         }
     }
 
+    /// <summary>
+    /// Represents the destinations for a flight.
+    /// </summary>
     public enum Destination 
     { 
         Istanbul, London, Berlin, Madrid, Moscow, Dubai, Washington
     }
 
+    /// <summary>
+    /// Represents the maximum seat rows for different plane configurations.
+    /// </summary>
     public enum PlaneConfiguration 
     {
         // maximum seat rows (6 seats on each row) of planes

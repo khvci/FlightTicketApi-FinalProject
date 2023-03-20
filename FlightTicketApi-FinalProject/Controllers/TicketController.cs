@@ -14,10 +14,10 @@ namespace FlightTicketApi_FinalProject.Controllers
     public class TicketController : ControllerBase
     {
         /// <summary>
-        /// Buy a new ticket with the specified seat
+        /// Buys a ticket for a given seat selection.
         /// </summary>
-        /// <param name="seatSelection"></param>
-        /// <returns></returns>
+        /// <param name="seatSelection">The seat selection data transfer object.</param>
+        /// <returns>An ActionResult of type Ticket.</returns>
         [HttpPost]
         [Route("buy")]
         public ActionResult<Ticket> BuyTicket([FromBody] SeatSelectionDTO seatSelection)
@@ -52,11 +52,10 @@ namespace FlightTicketApi_FinalProject.Controllers
         }
 
         /// <summary>
-        /// Return a ticket and make it available again
+        /// Returns a ticket.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        
+        /// <param name="request">The ticket return request data transfer object.</param>
+        /// <returns>An ActionResult of type string.</returns>
         [HttpDelete]
         [Route("return")]
         public ActionResult<string> ReturnTicket([FromBody] TicketReturnRequestDTO request)
@@ -85,10 +84,9 @@ namespace FlightTicketApi_FinalProject.Controllers
         }
 
         /// <summary>
-        /// Get all tickets from tickets repository
+        /// Gets all tickets from the repository.
         /// </summary>
-        /// <returns></returns>
-        
+        /// <returns>An ActionResult of type List of Ticket.</returns>
         [HttpGet]
         [Route("all")]
         public ActionResult<List<Ticket>> GetAllTickets()
@@ -108,6 +106,9 @@ namespace FlightTicketApi_FinalProject.Controllers
         }
     }
 
+    /// <summary>
+    /// A data transfer object representing a seat selection.
+    /// </summary>
     public class SeatSelectionDTO
     {
         public string FlightNumber { get; set; }
@@ -115,6 +116,9 @@ namespace FlightTicketApi_FinalProject.Controllers
         public string SeatColumn { get; set; }
     }
 
+    /// <summary>
+    /// A data transfer object representing a ticket return request.
+    /// </summary>
     public class TicketReturnRequestDTO
     {
         public string TicketToken { get; set; }

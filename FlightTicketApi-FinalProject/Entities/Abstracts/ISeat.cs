@@ -8,6 +8,9 @@
         public double Price { get; set; }
     }
 
+    /// <summary>
+    /// Represents the characters used to label columns in a flight.
+    /// </summary>
     public enum ColumnCharacters
     {
         A, B, C, D, E, F,

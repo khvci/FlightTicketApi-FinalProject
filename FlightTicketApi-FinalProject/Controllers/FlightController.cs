@@ -13,10 +13,10 @@ namespace FlightTicketApi_FinalProject.Controllers
     public class FlightController : ControllerBase
     {
         /// <summary>
-        /// Create a flight and add it to flights repository
+        /// Creates a new flight and adds it to the repository.
         /// </summary>
-        /// <param name="flightRequest"></param>
-        /// <returns></returns>
+        /// <param name="flightRequest">The flight request data transfer object.</param>
+        /// <returns>An ActionResult of type Flight.</returns>
         [HttpPost]
         public ActionResult<Flight> CreateFlight([FromBody] FlightRequestDTO flightRequest)
         {
@@ -39,10 +39,10 @@ namespace FlightTicketApi_FinalProject.Controllers
         }
 
         /// <summary>
-        /// Get all available seats in a specified flight
+        /// Gets the available seats for a given flight number.
         /// </summary>
-        /// <param name="flightNumber"></param>
-        /// <returns></returns>
+        /// <param name="flightNumber">The flight number.</param>
+        /// <returns>An ActionResult of type List of ISeat.</returns>
         [HttpGet]
         [Route("{flightNumber}")]
         public ActionResult<List<ISeat>> GetAvailableSeats(string flightNumber)
@@ -64,9 +64,9 @@ namespace FlightTicketApi_FinalProject.Controllers
         }
 
         /// <summary>
-        /// Get all flights
+        /// Gets all flights from the repository.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An ActionResult of type List of FlightResponseDTO.</returns>
         [HttpGet]
         [Route("all")]
         public ActionResult<List<FlightResponseDTO>> GetAllFlights()
@@ -90,11 +90,10 @@ namespace FlightTicketApi_FinalProject.Controllers
         }
 
         /// <summary>
-        /// Deletes an existing flight
+        /// Deletes a flight from the repository.
         /// </summary>
-        /// <param name="flightNumber"></param>
-        /// <returns></returns>
-        
+        /// <param name="flightNumber">The flight number.</param>
+        /// <returns>An ActionResult of type string.</returns>
         [HttpDelete]
         [Route("delete/{flightNumber}")]
         public ActionResult<string> DeleteFlight(string flightNumber)
@@ -118,6 +117,9 @@ namespace FlightTicketApi_FinalProject.Controllers
         }
     }
 
+    /// <summary>
+    /// A data transfer object representing a flight request.
+    /// </summary>
     public class FlightRequestDTO
     {
         public string FlightNumber { get; set; }
@@ -126,10 +128,11 @@ namespace FlightTicketApi_FinalProject.Controllers
         public int ArrivalCityId { get; set; }
         public DateTime FlightTime { get; set; }
         public int BusinessClassRows { get; set; }
-
-        
     }
 
+    /// <summary>
+    /// A data transfer object representing a flight response.
+    /// </summary>
     public class FlightResponseDTO
     {
         public string FlightNumber { get; set; }
