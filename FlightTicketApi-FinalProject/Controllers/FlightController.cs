@@ -20,15 +20,22 @@ namespace FlightTicketApi_FinalProject.Controllers
         [HttpPost]
         public ActionResult<Flight> CreateFlight([FromBody] FlightRequestDTO flightRequest)
         {
-            if (FlightsRepo.Flights.Exists(f => f.FlightNumber == flightRequest.FlightNumber))
+            try
             {
-                return BadRequest($"Flight with flight number {flightRequest.FlightNumber} already exists.");
+                if (FlightsRepo.Flights.Exists(f => f.FlightNumber == flightRequest.FlightNumber))
+                {
+                    return BadRequest($"Flight with flight number {flightRequest.FlightNumber} already exists.");
+                }
+
+                Flight flight = new Flight(flightRequest);
+                FlightService.AddFlightToRepository(flight);
+
+                return Ok(flight);
             }
-
-            Flight flight = new Flight(flightRequest);
-            FlightService.AddFlightToRepository(flight);
-
-            return Ok(flight);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         /// <summary>
@@ -40,13 +47,20 @@ namespace FlightTicketApi_FinalProject.Controllers
         [Route("{flightNumber}")]
         public ActionResult<List<ISeat>> GetAvailableSeats(string flightNumber)
         {
-            Flight flight = FlightsRepo.Flights.FirstOrDefault(f => f.FlightNumber.Equals(flightNumber));
-            if (flight == null)
+            try
             {
-                return BadRequest("Flight not found");
-            }
+                Flight flight = FlightsRepo.Flights.FirstOrDefault(f => f.FlightNumber.Equals(flightNumber));
+                if (flight == null)
+                {
+                    return BadRequest("Flight not found");
+                }
 
-            return Ok(SeatService.GetAvailableSeatsInFlight(flight));
+                return Ok(SeatService.GetAvailableSeatsInFlight(flight));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         /// <summary>
@@ -57,15 +71,22 @@ namespace FlightTicketApi_FinalProject.Controllers
         [Route("all")]
         public ActionResult<List<FlightResponseDTO>> GetAllFlights()
         {
-            if (FlightsRepo.Flights == null)
+            try
             {
-                return BadRequest("Flights repository is not initialized");
+                if (FlightsRepo.Flights == null)
+                {
+                    return BadRequest("Flights repository is not initialized");
+                }
+
+                List<FlightResponseDTO> allFlightDTO = FlightsRepo.Flights
+                    .Select(f => new FlightResponseDTO(f)).ToList();
+
+                return Ok(allFlightDTO);
             }
-
-            List<FlightResponseDTO> allFlightDTO = FlightsRepo.Flights
-                .Select(f => new FlightResponseDTO(f)).ToList();
-
-            return Ok(allFlightDTO);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         /// <summary>
@@ -78,14 +99,22 @@ namespace FlightTicketApi_FinalProject.Controllers
         [Route("delete/{flightNumber}")]
         public ActionResult<string> DeleteFlight(string flightNumber)
         {
-            Flight flight = FlightsRepo.Flights.FirstOrDefault(f => f.FlightNumber.Equals(flightNumber));
-            if (flight == null)
+            try
             {
-                return BadRequest("Flight not found");
+                Flight flight = FlightsRepo.Flights.FirstOrDefault(f => f.FlightNumber.Equals(flightNumber));
+                if (flight == null)
+                {
+                    return BadRequest("Flight not found");
+                }
+                FlightsRepo.Flights.Remove(flight);
+                TicketsRepo.Tickets.RemoveAll(t => t.FlightNumber.Equals(flight.FlightNumber));
+                return Ok($"Flight {flightNumber} has been deleted");
+
             }
-            FlightsRepo.Flights.Remove(flight);
-            TicketsRepo.Tickets.RemoveAll(t => t.FlightNumber.Equals(flight.FlightNumber));
-            return Ok($"Flight {flightNumber} has been deleted");
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 
@@ -98,24 +127,24 @@ namespace FlightTicketApi_FinalProject.Controllers
         public DateTime FlightTime { get; set; }
         public int BusinessClassRows { get; set; }
 
-        public FlightRequestDTO()
-        {
-        }
+        //public FlightRequestDTO()
+        //{
+        //}
 
-        public FlightRequestDTO(string flightNumber, int planeType, int departureCityId, int arrivalCityId, DateTime flightTime, int businessClassRows)
-        {
-            FlightNumber = flightNumber;
-            PlaneType = planeType;
-            DepartureCityId = departureCityId;
-            ArrivalCityId = arrivalCityId;
-            FlightTime = flightTime;
-            BusinessClassRows = businessClassRows;
-        }
+        //public FlightRequestDTO(string flightNumber, int planeType, int departureCityId, int arrivalCityId, DateTime flightTime, int businessClassRows)
+        //{
+        //    FlightNumber = flightNumber;
+        //    PlaneType = planeType;
+        //    DepartureCityId = departureCityId;
+        //    ArrivalCityId = arrivalCityId;
+        //    FlightTime = flightTime;
+        //    BusinessClassRows = businessClassRows;
+        //}
 
-        public FlightRequestDTO(Flight flight) : 
-            this(flight.FlightNumber, flight.PlaneType, flight.DepartureCityId, flight.ArrivalCityId, flight.FlightTime, flight.BusinessClassRows)
-        {
-        }
+        //public FlightRequestDTO(Flight flight) : 
+        //    this(flight.FlightNumber, flight.PlaneType, flight.DepartureCityId, flight.ArrivalCityId, flight.FlightTime, flight.BusinessClassRows)
+        //{
+        //}
     }
 
     public class FlightResponseDTO

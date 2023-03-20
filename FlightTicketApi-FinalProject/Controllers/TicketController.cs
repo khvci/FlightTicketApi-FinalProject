@@ -3,6 +3,7 @@ using FlightTicketApi_FinalProject.DataRepository;
 using FlightTicketApi_FinalProject.Entities.Abstracts;
 using FlightTicketApi_FinalProject.Entities.Concretes;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,25 +22,32 @@ namespace FlightTicketApi_FinalProject.Controllers
         [Route("buy")]
         public ActionResult<Ticket> BuyTicket([FromBody] SeatSelectionDTO seatSelection)
         {
-            Flight flight = FlightsRepo.Flights.FirstOrDefault(f => f.FlightNumber.Equals(seatSelection.FlightNumber));
-
-            if (flight == null)
+            try
             {
-                return BadRequest("Flight not found");
+                Flight flight = FlightsRepo.Flights.FirstOrDefault(f => f.FlightNumber.Equals(seatSelection.FlightNumber));
+
+                if (flight == null)
+                {
+                    return BadRequest("Flight not found");
+                }
+
+                ISeat selectedSeat;
+                string seatType = seatSelection.SeatRow <= flight.BusinessClassRows ? "BusinessSeat" : "RegularSeat";
+                selectedSeat = flight.Seats.FirstOrDefault(
+                    s => s.SeatRow == seatSelection.SeatRow && s.SeatColumn == seatSelection.SeatColumn && s.GetType().Name == seatType && s.IsAvailable);
+
+                if (selectedSeat == null)
+                {
+                    return BadRequest($"Seat {seatSelection.SeatRow}{seatSelection.SeatColumn} is not available.");
+                }
+
+                Ticket ticket = TicketService.CreateTicketToBuySeat(flight, selectedSeat);
+                return Ok(ticket);
             }
-
-            ISeat selectedSeat;
-            string seatType = seatSelection.SeatRow <= flight.BusinessClassRows ? "BusinessSeat" : "RegularSeat";
-            selectedSeat = flight.Seats.FirstOrDefault(
-                s => s.SeatRow == seatSelection.SeatRow && s.SeatColumn == seatSelection.SeatColumn && s.GetType().Name == seatType && s.IsAvailable);
-
-            if (selectedSeat == null)
+            catch (Exception ex)
             {
-                return BadRequest($"Seat {seatSelection.SeatRow}{seatSelection.SeatColumn} is not available.");
+                return StatusCode(500, "Internal server error");
             }
-
-            Ticket ticket = TicketService.CreateTicketToBuySeat(flight, selectedSeat);
-            return Ok(ticket);
 
         }
 
@@ -53,20 +61,27 @@ namespace FlightTicketApi_FinalProject.Controllers
         [Route("return")]
         public ActionResult<string> ReturnTicket([FromBody] TicketReturnRequestDTO request)
         {
-            if (TicketsRepo.Tickets == null)
+            try
             {
-                return BadRequest("Tickets repository is not initialized");
+                if (TicketsRepo.Tickets == null)
+                {
+                    return BadRequest("Tickets repository is not initialized");
+                }
+
+                Ticket ticket = TicketsRepo.Tickets.FirstOrDefault(t => t.TicketToken.Equals(request.TicketToken));
+
+                if (ticket == null)
+                {
+                    return BadRequest("Ticket not found");
+                }
+
+                TicketService.ReturnTicket(ticket);
+                return Ok("Ticket returned successfully");
             }
-
-            Ticket ticket = TicketsRepo.Tickets.FirstOrDefault(t => t.TicketToken.Equals(request.TicketToken));
-
-            if (ticket == null)
+            catch (Exception ex)
             {
-                return BadRequest("Ticket not found");
+                return StatusCode(500, "Internal server error");
             }
-
-            TicketService.ReturnTicket(ticket);
-            return Ok("Ticket returned successfully");
         }
 
         /// <summary>
@@ -78,11 +93,18 @@ namespace FlightTicketApi_FinalProject.Controllers
         [Route("all")]
         public ActionResult<List<Ticket>> GetAllTickets()
         {
-            if (TicketsRepo.Tickets == null)
+            try
             {
-                return BadRequest("Tickets repository is not initialized");
+                if (TicketsRepo.Tickets == null)
+                {
+                    return BadRequest("Tickets repository is not initialized");
+                }
+                return Ok(TicketsRepo.Tickets);
             }
-            return Ok(TicketsRepo.Tickets);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 
