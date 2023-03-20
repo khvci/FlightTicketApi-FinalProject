@@ -84,15 +84,6 @@ namespace FlightTicketApi_FinalProject.Controllers
                 return BadRequest("Flight not found");
             }
             FlightsRepo.Flights.Remove(flight);
-            //Ticket ticket = TicketsRepo.Tickets.FirstOrDefault(t => t.TicketToken.Equals(request.TicketToken));
-            //foreach (var ticket in TicketsRepo.Tickets)
-            //{
-            //    if (ticket.FlightNumber.Equals(flight.FlightNumber))
-            //    {
-            //        TicketsRepo.Tickets.Remove(ticket);
-            //    }
-            //}
-
             TicketsRepo.Tickets.RemoveAll(t => t.FlightNumber.Equals(flight.FlightNumber));
             return Ok($"Flight {flightNumber} has been deleted");
         }
